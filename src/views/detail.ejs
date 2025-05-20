@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Porsche Detail</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    .label { font-weight: bold; }
+    .badge { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <a class="navbar-brand" href="/">Porsche App</a>
+    <ul class="navbar-nav ms-3">
+      <li class="nav-item"><a class="nav-link active" href="/">Porsches</a></li>
+      <li class="nav-item"><a class="nav-link" href="/factories">Fabrieken</a></li>
+    </ul>
+  </nav>
+
+  <div class="container mt-4">
+    <a href="/" class="btn btn-secondary mb-3">⬅ Terug naar overzicht</a>
+    <div id="content">Laden...</div>
+  </div>
+
+  <script>
+    const id = new URLSearchParams(window.location.search).get("id");
+
+    fetch("https://raw.githubusercontent.com/phebe02/porscheProject/main/data/porsches.json")
+      .then(res => res.json())
+      .then(data => {
+        const item = data.find(p => p.id === id);
+        const div = document.getElementById("content");
+
+        if (!item) {
+          div.innerHTML = "<div class='alert alert-danger'>❌ Porsche met ID '" + id + "' niet gevonden.</div>";
+          return;
+        }
+
+        div.innerHTML = `
+          <div class="card mb-4">
+            <div class="row g-0">
+              <div class="col-md-5 text-center">
+                <img src="${item.imageUrl}" alt="${item.name}" class="img-fluid rounded-start p-3">
+              </div>
+              <div class="col-md-7">
+                <div class="card-body">
+                  <h2 class="card-title">${item.name} <small class="text-muted">(${item.id})</small></h2>
+                  <p class="card-text"><span class="label">Beschrijving:</span> ${item.description}</p>
+                  <p class="card-text"><span class="label">Prijs:</span> €${item.price}</p>
+                  <p class="card-text"><span class="label">Beschikbaar:</span> ${item.isAvailable ? "✅" : "❌"}</p>
+                  <p class="card-text"><span class="label">Categorie:</span> ${item.category}</p>
+                  <p class="card-text"><span class="label">Release datum:</span> ${item.releaseDate}</p>
+                  <p class="card-text"><span class="label">Kenmerken:</span><br>
+                    ${item.features.map(f => `<span class="badge bg-primary">${f}</span>`).join(" ")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              Fabriek
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="/factory?id=${item.factory.id}">${item.factory.name}</a>
+              </h5>
+              <p class="card-text"><span class="label">Locatie:</span> ${item.factory.location}</p>
+              <p class="card-text"><span class="label">Opgericht in:</span> ${item.factory.founded}</p>
+              <p class="card-text"><span class="label">Elektrisch gecertificeerd:</span> ${item.factory.isElectricCertified ? "✅" : "❌"}</p>
+              <img src="${item.factory.logoUrl}" alt="Factory logo" class="img-fluid mt-3" style="max-width: 150px;">
+            </div>
+          </div>
+        `;
+      });
+  </script>
+</body>
+</html>

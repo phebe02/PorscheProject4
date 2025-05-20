@@ -1,0 +1,12 @@
+# Node dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Gevoelige configuratie
+.env
+
+# Log- en systeembestanden
+*.log
+.DS_Store
